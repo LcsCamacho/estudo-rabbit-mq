@@ -3,8 +3,14 @@ import { Candle, CandleModel } from "../models/CandleModel"
 export default class CandleController {
 
     async save(candle: Candle): Promise<Candle> {
-        const newCandle = await CandleModel.create(candle)
-        return newCandle
+        console.log('Saving candle')
+        await CandleModel.db.collection('newCandles').insertOne(candle, {
+            writeConcern: {
+                w: 'majority',
+                wtimeout: 25000
+            }
+        })
+        return candle
     }
 
     async findLastCandles(quantity: number): Promise<Candle[]> {
